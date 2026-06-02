@@ -21,6 +21,7 @@ export default function Home() {
         </div>
 
         <div className="w-full h-fit flex flex-col items-end mt-4">
+          <span className="text-sm text-center text-gray-400 w-full">Sign in to your account</span>
           <button className=" text-sm py-2 px-4 bg-foreground text-background font-bold rounded tracking-wide cursor-pointer hover:bg-gray-700 transition duration-200">LOG IN</button>
         </div>
 
