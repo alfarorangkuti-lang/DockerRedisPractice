@@ -1,10 +1,13 @@
 const express = require('express');
+const authRoutes = require('./routes/authRoutes')
 const app = express();
 
 app.use(express.json())
 
+app.use('/auth',authRoutes)
+
 app.get('/', (req, res) => {
-    res.send([{'kategori' : 'JB', 'deskripsi' : 'unit jadi baru'}, {'kategori' : '2ND', 'deskripsi' : 'unit bekas'}]);
+    res.send(["learn docker-redis"]);
 })
 
 module.exports = app
