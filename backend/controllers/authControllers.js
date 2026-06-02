@@ -3,18 +3,17 @@ const UserModel = require('../model/User')
 const bcrypt = require('bcrypt')
 
 exports.getUserDetail = async(req, res) =>{
-    const result = await UserModel.getUser()
-    res.json(result)
+    res.json({id:req.user.id, username:req.user.username})
 }
 
 exports.registerUser = async(req, res) => {
-    const { username, password }= req.body
-    const hashedPassowrd = await bcrypt.hash(password, 10)
-    res.send({username, hashedPassowrd})
+    const { username, password } = req.body
+    const result = await UserModel.register(username, password)
+    res.send({message : result})
 }
 
-exports.comparePassword = async(req, res) => {
-    const hashedPassowrd = await bcrypt.hash("Admin#1234", 10)
-    const isMatch = await bcrypt.compare(req.body.password, hashedPassowrd)
-    res.send([isMatch])
+exports.logIn = async(req, res) => {
+    const { username, password } = req.body
+    const result = await UserModel.logIn(username,password)
+    res.send({message: result})
 }
