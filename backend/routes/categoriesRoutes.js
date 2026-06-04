@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/', authMiddleware, categoriesController.getAllCategories)
 router.get('/:id', authMiddleware, categoriesController.getCategoryById)
-router.delete('/', authMiddleware, categoriesController.deleteCategory)
+router.delete('/:id', authMiddleware, categoriesController.deleteCategory)
 router.post('/', authMiddleware, categoriesController.createCategory)
 router.put('/', authMiddleware, categoriesController.updateCategory)
 

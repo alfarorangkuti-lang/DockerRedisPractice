@@ -7,7 +7,7 @@ exports.getAll = async() => {
             )
         return result        
     } catch (error) {
-        return error.message
+        throw error
     }
 }
 
@@ -21,7 +21,7 @@ exports.createCategory = async(category, description) => {
             return "berhasil"
         }
     } catch (error) {
-        return error.message
+        throw error
         
     }
 }
@@ -30,12 +30,12 @@ exports.destroyCategory = async (id) => {
     try {
         const [result] = await db.query('DELETE FROM categories WHERE id = (?)', [id])
         if (result.affectedRows > 0) {
-            return "berhasil!"
+            return "berhasil"
         } else {
             return "gagal"
         }
     } catch (error) {
-        return error.message
+        throw error
     }
     
 }
@@ -47,12 +47,12 @@ exports.updateCategory = async(id, category, description) => {
             [category, description, id]
         )
         if (result.affectedRows > 0) {
-            return "berhasil!"
+            return "berhasil"
         } else {
             return "gagal"
         }
     } catch (error) {
-        return error.message
+        throw error
     }
 }
 
@@ -64,6 +64,6 @@ exports.getCategoryById = async(id) => {
         )
         return result[0]
     } catch (error) {
-        return error.message
+        throw error
     }
 }
