@@ -1,6 +1,30 @@
-import Image from "next/image";
+'use client'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { login } from "./services/auth";
 
 export default function Home() {
+  const router = useRouter()
+  const [username, setUsername] = useState("")
+  const [message, setMessage] = useState("sign in to your account")
+  const [password, setPassword] = useState("")
+
+  const handleLogin = async() => {
+    const result = await login(username, password)
+    if (result.message.token) {
+      localStorage.setItem("tokenApp", result.message.token)
+      router.push('/pages/home')
+    } else {
+      setMessage(result.message)
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("tokenApp")
+    if (token) {
+      router.push("/pages/home")
+    }
+  },[])
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-midground space-y-4">
       
@@ -12,17 +36,17 @@ export default function Home() {
       <div className="w-lg h-72 py-10 px-6 pb-20 border border-stroke rounded-xl space-y-2">
         <div className="w-full h-fit flex flex-col space-y-2">
           <label htmlFor="username" className="text-sm">Username</label>
-          <input type="text" className="rounded-md border border-stroke p-2 outline-0 focus:outline-1 outline-stroke tracking-wider"/>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" className="rounded-md border border-stroke p-2 outline-0 focus:outline-1 outline-stroke tracking-wider"/>
         </div>
 
         <div className="w-full h-fit flex flex-col space-y-2">
           <label htmlFor="username" className="text-sm">Password</label>
-          <input type="password" className="rounded-md border border-stroke p-2 outline-0 focus:outline-1 outline-stroke tracking-widest"/>
+          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="rounded-md border border-stroke p-2 outline-0 focus:outline-1 outline-stroke tracking-widest"/>
         </div>
 
         <div className="w-full h-fit flex flex-col items-end mt-4">
-          <span className="text-sm text-center text-gray-400 w-full">Sign in to your account</span>
-          <button className=" text-sm py-2 px-4 bg-foreground text-background font-bold rounded tracking-wide cursor-pointer hover:bg-gray-700 transition duration-200">LOG IN</button>
+          <span className="text-sm text-center text-gray-400 w-full">{message}</span>
+          <button onClick={handleLogin} className=" text-sm py-2 px-4 bg-foreground text-background font-bold rounded tracking-wide cursor-pointer hover:bg-gray-700 transition duration-200">LOG IN</button>
         </div>
 
       </div>

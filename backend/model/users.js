@@ -36,7 +36,7 @@ exports.logIn = async(username, password) => {
                     id: result[0].id,
                     username: result[0].username
                 }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' })
-                return token
+                return {token: token}
             } else {
                 return 'password salah!'
             }

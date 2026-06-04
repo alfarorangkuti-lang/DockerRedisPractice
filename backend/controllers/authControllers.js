@@ -1,5 +1,5 @@
 const express = require('express')
-const UserModel = require('../model/User')
+const UserModel = require('../model/users')
 const bcrypt = require('bcrypt')
 
 exports.getUserDetail = async(req, res) =>{
