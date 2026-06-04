@@ -8,8 +8,8 @@ export default function Categories(){
 
     const badgeItems = [
         {icon: Bookmark,label : "Kategori", description: "Stok berdasarkan kategori", endIcon: ChevronRight, count: '3', route:'/pages/stockItems/categories'},
-        {icon: SmartphoneCharging,label : "Tipe Unit", description: "Stok berdasarkan tipe unit", endIcon: ChevronRight, count: '37', route:'/pages/stockItems/categories'},
-        {icon: CircleUserRound,label : "Suppliers", description: "Pemasok unit stok", endIcon: ChevronRight, count: '7', route:'/pages/stockItems/categories'},
+        {icon: SmartphoneCharging,label : "Tipe Unit", description: "Stok berdasarkan tipe unit", endIcon: ChevronRight, count: '37', route:'/pages/stockItems/stockParents'},
+        {icon: CircleUserRound,label : "Suppliers", description: "Pemasok unit stok", endIcon: ChevronRight, count: '7', route:'/pages/stockItems/suppliers'},
         {icon: HandCoins,label : "Valuasi Inventory", description: "Total seluruh harga stok", endIcon: Circle, count: 'Rp. 5.3 M', route:'/pages/stockItems/categories'},
     ]
 

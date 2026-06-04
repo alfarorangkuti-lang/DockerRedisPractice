@@ -36,7 +36,7 @@ export default function EditCategory(){
     }
 
     return(
-        <MainLayout button = {<BackButton routeTo="/pages/stockItems/categories" />} title = "Kategori Baru">
+        <MainLayout button = {<BackButton routeTo="/pages/stockItems/categories" />} title = "Edit Kategori">
             <div className="w-full h-screen rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
                 <div className="h-fit w-1/3 bg-white px-3 py-5 items-center justify-center rounded-xl border border-stroke space-y-2">
                     <div className="flex flex-col space-y-2">
