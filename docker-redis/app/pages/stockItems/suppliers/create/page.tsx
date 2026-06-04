@@ -2,6 +2,7 @@
 
 import MainLayout from "@/app/components/mainLayout"
 import BackButton from "@/app/components/backButton"
+import { createSupplier } from "@/app/services/suppliers"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -16,8 +17,13 @@ export default function CreateSupplier() {
             return
         }
 
-        // TODO: connect to supplier creation API when available
-        setMessage('Supplier berhasil ditambahkan')
+        try {
+            await createSupplier(name)
+            setMessage('Supplier berhasil ditambahkan')
+        } catch (error) {
+            setMessage('Gagal menambahkan supplier')
+        }
+
         setTimeout(() => {
             router.push('/pages/stockItems/suppliers')
         }, 1000)

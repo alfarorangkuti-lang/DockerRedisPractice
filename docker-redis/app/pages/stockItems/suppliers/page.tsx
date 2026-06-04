@@ -2,32 +2,37 @@
 
 import MainLayout from "@/app/components/mainLayout"
 import BackButton from "@/app/components/backButton"
+import { getSuppliers, deleteSupplier} from "@/app/services/suppliers"
+import { useRouter } from "next/navigation"
 import { Search, Plus, Pencil, Trash } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 
 export default function SuppliersPage() {
     type Supplier = {
         id: number
         name: string
-        goodsCount: number
     }
 
     const [searchTerm, setSearchTerm] = useState("")
-
-    const suppliers: Supplier[] = [
-        { id: 1, name: "PT. Sinar Abadi", goodsCount: 16 },
-        { id: 2, name: "CV. Mandiri Jaya", goodsCount: 9 },
-        { id: 3, name: "PT. Global Elektronik", goodsCount: 24 },
-        { id: 4, name: "Distributor Ponsel Nusantara", goodsCount: 12 },
-        { id: 5, name: "UD. Mitra Stok", goodsCount: 7 },
-    ]
+    const [suppliers, setSuppliers] = useState<Supplier[]>([])
+    const router = useRouter()
 
     const filteredSuppliers = useMemo(
         () => suppliers.filter((supplier) =>
             supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
         ),
-        [searchTerm]
+        [suppliers,searchTerm]
     )
+
+    const fetchSuppliers = async () => {
+        const data = await getSuppliers()
+        setSuppliers(data)
+    }
+
+        useEffect(() => {
+        fetchSuppliers()
+        setSearchTerm("")
+    }, [])
 
     return (
         <MainLayout button={<BackButton routeTo="/pages/stockItems" />} title="Suppliers">
@@ -51,7 +56,7 @@ export default function SuppliersPage() {
                     <span>{suppliers.length}</span>
                 </div>
                 
-                <button className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-full p-2 px-3 text-sm tracking-wider border border-stroke hover:opacity-80 duration-200">
+                <button onClick={() => {router.push('./suppliers/create')}}className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-full p-2 px-3 text-sm tracking-wider border border-stroke hover:opacity-80 duration-200">
                     <Plus size={16} />
                     New Supplier
                 </button>
@@ -74,7 +79,7 @@ export default function SuppliersPage() {
                             <tr key={supplier.id} className="border-t border-stroke hover:bg-slate-50 transition-colors">
                                 <td className="px-6 py-4 font-semibold">{index + 1}</td>
                                 <td className="px-6 py-4">{supplier.name}</td>
-                                <td className="px-6 py-4 text-center font-semibold">{supplier.goodsCount}</td>
+                                <td className="px-6 py-4 text-center font-semibold">0</td>
                                 <td className="px-6 py-4 text-center">
                                     <div className="inline-flex items-center justify-center gap-2">
                                         <button className="rounded-xl bg-foreground-2 p-2 border border-stroke text-gray-600 hover:bg-blue-100 transition-colors">
