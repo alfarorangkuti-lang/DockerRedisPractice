@@ -18,9 +18,11 @@ export default function MainLayout({children, title, button} : {children : React
         <div className="flex">
             <NavBar/>
             <div className="flex-1 p-5 ml-18">
-                <div className="flex w-full items-center gap-2">
-                    {button}
-                    <span className="text-3xl font-bold">{title}</span>
+                <div className="flex w-full justify-between items-center gap-2">
+                    <div className="flex items-center gap-2">
+                        {button}
+                        <span className="text-3xl font-bold">{title}</span>
+                    </div>
                 </div>
                 {children}
             </div>

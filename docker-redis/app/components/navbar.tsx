@@ -3,11 +3,18 @@
 import { useState } from "react"
 import {usePathname} from "next/navigation"
 import Link from "next/link"
-import { Biohazard, ChartNetwork, FolderInput, BadgeJapaneseYen, Boxes, PanelLeftOpen, PanelLeftClose } from "lucide-react"
+import { Biohazard, ChartNetwork, FolderInput, BadgeJapaneseYen, Boxes, PanelLeftOpen, PanelLeftClose, LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 
 export default function NavBar(){
     const [isOpen, setIsOpen] = useState(false)
+    const router = useRouter()
     const pathname = usePathname()
+    const logout = () => {
+            localStorage.removeItem("tokenApp")
+            router.push('/')
+        }
     return (
         <div className={`h-screen ${ isOpen ? "max-w-60 w-full" : "max-w-18 w-full"} fixed top-0 left-0 bg-midground border flex flex-col border-stroke transition-all duration-150`}>
             
@@ -43,7 +50,18 @@ export default function NavBar(){
             </div>
             
             <div className="flex items-center justify-center w-full h-fit border-t border-stroke p-3 space-x-2">
-                <button onClick={() => {setIsOpen((prev) => !prev)}} className="w-full rounded-xl bg-foreground-2 border border-stroke py-2.5 px-3 flex justify-center hover:bg-gray-200 duration-150">
+                
+                
+                {isOpen && 
+                
+                <button className="py-2.5 px-3 rounded-xl border border-stroke bg-foreground-2 hover:bg-gray-200 cursor-pointer transition duration-200" onClick={logout}>
+                    <LogOut className="rotate-180" />
+                </button>
+                
+                }
+
+
+                <button onClick={() => {setIsOpen((prev) => !prev)}} className="flex-1 rounded-xl bg-foreground-2 border border-stroke py-2.5 px-3 flex justify-center hover:bg-gray-200 duration-150">
                     {isOpen ? <PanelLeftClose /> : <PanelLeftOpen />}
                 </button>
             </div>
