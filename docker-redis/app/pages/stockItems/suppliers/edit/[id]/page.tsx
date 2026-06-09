@@ -2,15 +2,25 @@
 
 import MainLayout from "@/app/components/mainLayout"
 import BackButton from "@/app/components/backButton"
-import { createSupplier } from "@/app/services/suppliers"
-import { useState } from "react"
+import { getSupplierById, editSupplier } from "@/app/services/suppliers"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 
-export default function CreateSupplier() {
+export default function EditSupplier() {
+    const { id } = useParams()
     const router = useRouter()
     const [name, setName] = useState<string>("")
-    const [isSubmitting, setisSubmitting] = useState(false)
     const [message, setMessage] = useState<string>("")
+
+    const data = async() => {
+        const response = await getSupplierById(Number(id))
+        setName(response.name)
+    }
+
+    useEffect(() => {
+        data()
+    },[])
 
     const handleSubmit = async () => {
         if (!name.trim()) {
@@ -19,13 +29,10 @@ export default function CreateSupplier() {
         }
 
         try {
-            setisSubmitting(true)
-            await createSupplier(name)
-            setMessage('Supplier berhasil ditambahkan')
+            await editSupplier(Number(id), name)
+            setMessage('Supplier berhasil diedit')
         } catch (error) {
             setMessage('Gagal menambahkan supplier')
-        } finally{
-            setisSubmitting(false)
         }
 
         setTimeout(() => {
@@ -41,7 +48,6 @@ export default function CreateSupplier() {
                         <label htmlFor="supplier-name" className="text-sm font-medium">Nama Supplier</label>
                         <input
                             id="supplier-name"
-                            disabled={isSubmitting}
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}

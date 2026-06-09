@@ -2,6 +2,7 @@
 
 import MainLayout from "@/app/components/mainLayout"
 import BackButton from "@/app/components/backButton"
+import { createParentProducts } from "@/app/services/parentProducts"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -9,7 +10,7 @@ export default function CreateStockParent(){
     const router = useRouter()
     const [name, setName] = useState<string>("")
     const [memory, setMemory] = useState<string>("")
-    const [price, setPrice] = useState<string>("")
+    const [price, setPrice] = useState<number | "">("")
     const [message, setMessage] = useState<string>("")
 
     const handleSubmit = async () => {
@@ -17,12 +18,16 @@ export default function CreateStockParent(){
             setMessage('Semua field wajib diisi')
             return
         }
+        const result = await createParentProducts(name, memory, price)
+        setMessage(result as string)
 
-        // TODO: connect this to a real API endpoint when available
-        setMessage('Data berhasil disimpan')
-        setTimeout(() => {
+        if (result === "berhasil") {
+            setTimeout(() => {
             router.push('/pages/stockItems/stockParents')
-        }, 1000)
+            }, 1000)
+        }
+        // TODO: connect this to a real API endpoint when available
+        
     }
 
     return (
@@ -59,10 +64,11 @@ export default function CreateStockParent(){
                             id="price"
                             required
                             value={price}
-                            onChange={(e) => setPrice(e.target.value)}
+                            onChange={(e) => setPrice(e.target.value === "" ? "" : Number(e.target.value))}
                             placeholder="Masukan harga"
-                            type="text"
-                            className="placeholder:text-sm outline-stroke focus:outline-1 outline-none py-2 px-2 border border-stroke rounded-xl"
+                            type="number"
+                            pattern="[0-9]*"
+                            className="placeholder:text-sm outline-stroke focus:outline-1 outline-none py-2 px-2 border border-stroke rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                     </div>
                     <div className="flex flex-col w-full justify-center mt-3 space-y-4">

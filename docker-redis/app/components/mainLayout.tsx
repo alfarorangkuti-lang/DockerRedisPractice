@@ -16,7 +16,7 @@ export default function MainLayout({children, title, button} : {children : React
 
     return (
         <div className="flex">
-            <NavBar/>
+            <NavBar>
             <div className="flex-1 p-5 ml-18">
                 <div className="flex w-full justify-between items-center gap-2">
                     <div className="flex items-center gap-2">
@@ -26,6 +26,7 @@ export default function MainLayout({children, title, button} : {children : React
                 </div>
                 {children}
             </div>
+            </NavBar>
         </div>
     )
 }

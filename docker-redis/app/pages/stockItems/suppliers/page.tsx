@@ -3,6 +3,7 @@
 import MainLayout from "@/app/components/mainLayout"
 import BackButton from "@/app/components/backButton"
 import { getSuppliers, deleteSupplier} from "@/app/services/suppliers"
+import ConfirmationModal from "@/app/components/ConfirmationModal"
 import { useRouter } from "next/navigation"
 import { Search, Plus, Pencil, Trash } from "lucide-react"
 import { useMemo, useState, useEffect } from "react"
@@ -14,8 +15,23 @@ export default function SuppliersPage() {
     }
 
     const [searchTerm, setSearchTerm] = useState("")
+    const [id, setId] = useState(0)
+    const [isOpen, setIsOpen] = useState(false)
+    const [refresh, setRefresh] = useState(false)
     const [suppliers, setSuppliers] = useState<Supplier[]>([])
     const router = useRouter()
+
+    const onClose = () => {
+        setIsOpen(!isOpen)
+    }
+
+    const handleDelete = async() =>{
+        const response = await deleteSupplier(id)
+        if (response === 'berhasil') {
+            onClose()
+            setRefresh(!refresh)
+        }
+    }
 
     const filteredSuppliers = useMemo(
         () => suppliers.filter((supplier) =>
@@ -32,10 +48,19 @@ export default function SuppliersPage() {
         useEffect(() => {
         fetchSuppliers()
         setSearchTerm("")
-    }, [])
+    }, [refresh])
 
     return (
         <MainLayout button={<BackButton routeTo="/pages/stockItems" />} title="Suppliers">
+            <ConfirmationModal 
+                isOpen={isOpen} 
+                title="Konfirmasi Hapus" 
+                description="ingin menghapus supplier?"
+                onCancel={onClose}
+                onConfirm={handleDelete}
+
+            />
+
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-start mt-4 mb-4">
                 
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-2 w-full md:w-auto">
@@ -44,7 +69,7 @@ export default function SuppliersPage() {
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search supplier"
+                            placeholder="Cari supplier"
                             className="w-full rounded-full bg-white border border-stroke p-2 pr-11 text-sm outline-stroke focus:outline-1 focus:ring-2 focus:ring-blue-500"
                         />
                         <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -58,7 +83,7 @@ export default function SuppliersPage() {
                 
                 <button onClick={() => {router.push('./suppliers/create')}}className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-full p-2 px-3 text-sm tracking-wider border border-stroke hover:opacity-80 duration-200">
                     <Plus size={16} />
-                    New Supplier
+                    Supplier baru
                 </button>
 
                 
@@ -82,10 +107,10 @@ export default function SuppliersPage() {
                                 <td className="px-6 py-4 text-center font-semibold">0</td>
                                 <td className="px-6 py-4 text-center">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <button className="rounded-xl bg-foreground-2 p-2 border border-stroke text-gray-600 hover:bg-blue-100 transition-colors">
+                                        <button onClick={() => { router.push(`./suppliers/edit/${supplier.id}`) }} className=" cursor-pointer rounded-xl bg-foreground-2 p-2 border border-stroke text-gray-600 hover:bg-blue-100 transition-colors">
                                             <Pencil size={16} />
                                         </button>
-                                        <button className="rounded-xl bg-foreground-2 p-2 border border-stroke text-gray-600 hover:bg-red-100 transition-colors">
+                                        <button onClick={() => {setId(supplier.id); setIsOpen(true)}} className="cursor-pointer rounded-xl bg-foreground-2 p-2 border border-stroke text-gray-600 hover:bg-red-100 transition-colors">
                                             <Trash size={16} />
                                         </button>
                                     </div>
