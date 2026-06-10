@@ -40,7 +40,7 @@ exports.getParentProductsById = async(id) => {
         const [result] = await db.query('SELECT * FROM parent_products WHERE id = (?)',
             [id]
         )
-        return result
+        return result[0]
     } catch (error) {
         return error.message
     }
