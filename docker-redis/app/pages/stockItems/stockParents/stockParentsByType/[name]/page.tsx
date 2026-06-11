@@ -1,18 +1,38 @@
 'use client'
 import { useParams } from "next/navigation"
 import { StockParents } from "@/app/services/types"
-import { getAllParentProductsByName } from "@/app/services/parentProducts"
+import { getAllParentProductsByName, deleteParentProducts } from "@/app/services/parentProducts"
 import { useRouter } from "next/navigation"
 import MainLayout from "@/app/components/mainLayout"
+import ConfirmationModal from "@/app/components/ConfirmationModal"
 import BackButton from "@/app/components/backButton"
 import { Trash, Edit, Eye, EyeClosed, Plus } from "lucide-react"
 import { useState,useEffect } from "react"
 export default function StockParentsByType() {
     const [parentProducts, setParentProducts] = useState<StockParents[]>([])
+    const [isOpen, setIsOpen] = useState(false)
     const { name } = useParams()
     const router = useRouter()
+    const [desc, setDesc] = useState("Yaking ingin menghapus?")
     const [selectedItem, setSelectedItem] = useState(0)
+    const [selectedId, setSelectedId] = useState(0)
+    const [refresh, setRefresh] = useState(false)
     const decodedName = decodeURIComponent(String(name))
+
+    const handleDeleteButton = (id:number) => {
+        setSelectedId(id)
+        setIsOpen(true)
+    }
+
+    const handleDelete = async() => {
+        const result = await deleteParentProducts(selectedId)
+        if (result === "berhasil") {
+            setIsOpen(false)
+            setRefresh(!refresh)
+        } else {
+            setDesc(result)
+        }
+    }
 
     const getData = async() => {
         const data = await getAllParentProductsByName(String(name))
@@ -22,12 +42,19 @@ export default function StockParentsByType() {
     
     useEffect(() => {
         getData()
-    },[])
+    },[refresh])
     return (
         <MainLayout 
             button={<BackButton routeTo="/pages/stockItems/stockParents" />}
             title={decodedName}
         >
+            <ConfirmationModal 
+                isOpen={isOpen} 
+                title="Konfirmasi hapus" 
+                description="Ingin menghapus tipe?" 
+                onConfirm={handleDelete}
+                onCancel={() => setIsOpen(false)}
+                isDangerous/>
             <div className="flex gap-2 w-full h-full mt-5 relative">
                 <div className="w-full h-300 bg-midground border border-stroke rounded-xl">
                     a
@@ -52,7 +79,7 @@ export default function StockParentsByType() {
                                         <td className="text-center p-2 bg-midground border-y border-stroke">{item.dgi_price/1000}</td>
                                         <td className="text-center p-2 bg-midground border-y border-stroke">0</td>
                                         <td className="justify-center gap-1 items-center p-2 rounded-r-xl bg-midground border-y border-r border-stroke flex">
-                                            <button className="p-1 rounded-lg cursor-pointer hover:opacity-70 border border-stroke bg-foreground-2"><Trash size={18}/></button>
+                                            <button onClick={() => handleDeleteButton(item.id)} className="p-1 rounded-lg cursor-pointer hover:opacity-70 border border-stroke bg-foreground-2"><Trash size={18}/></button>
                                             <button onClick={() => router.push(`/pages/stockItems/stockParents/edit/${item.id}`)} className="p-1 rounded-lg cursor-pointer hover:opacity-70 border border-stroke bg-foreground-2"><Edit size={18}/></button>
                                             <button onClick={() => setSelectedItem(item.id)} className="p-1 rounded-lg cursor-pointer hover:opacity-70 border border-stroke bg-foreground-2">{selectedItem === item.id ? <Eye size={18}/> : <EyeClosed size={18}/> }</button>
                                         </td>
