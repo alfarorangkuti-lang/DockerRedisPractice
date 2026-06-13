@@ -4,20 +4,22 @@ import MainLayout from "@/app/components/mainLayout"
 import BackButton from "@/app/components/backButton"
 import { editParentProducts, getParentProductsById} from "@/app/services/parentProducts"
 import { useState, useEffect } from "react"
-import { StockParents } from "@/app/services/types"
 import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 
-export default function CreateStockParent(){
+export default function EditStockParent(){
     const router = useRouter()
     const { id }= useParams()
+    const [isLoading, setIsLoading] = useState(false)
     
     const fetchData = async() => {
+        setIsLoading(true)
         const dataFetch = await getParentProductsById(Number(id))
         setName(dataFetch.name)
         setMemory(dataFetch.memory)
         setPrice(dataFetch.dgi_price)
         setBackName(dataFetch.name)
+        setIsLoading(false)
     }
 
     const [name, setName] = useState<string>('')
@@ -38,20 +40,20 @@ export default function CreateStockParent(){
             setMessage('Semua field wajib diisi')
             return
         }
+        setIsLoading(true)
         const result = await editParentProducts(Number(id),name, memory, price)
         setMessage(result as string)
-
+        setIsLoading(false)
         if (result === "berhasil") {
             setTimeout(() => {
                 router.push(`/pages/stockItems/stockParents/stockParentsByType/${backName}`)
             }, 1000)
         }
-        // TODO: connect this to a real API endpoint when available
         
     }
 
     return (
-        <MainLayout button={<BackButton routeTo={`/pages/stockItems/stockParents/stockParentsByType/${backName}`} />} title="Tipe Baru">
+        <MainLayout isLoading={isLoading} button={<BackButton routeTo={`/pages/stockItems/stockParents/stockParentsByType/${backName}`} />} title="Tipe Baru">
             <div className="w-full min-h-[80vh] rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
                 <div className="h-fit w-full max-w-xl bg-white px-6 py-6 rounded-xl border border-stroke space-y-4">
                     <div className="flex flex-col space-y-2">

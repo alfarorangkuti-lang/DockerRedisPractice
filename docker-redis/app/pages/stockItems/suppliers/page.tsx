@@ -15,6 +15,7 @@ export default function SuppliersPage() {
     }
 
     const [searchTerm, setSearchTerm] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
     const [id, setId] = useState(0)
     const [isOpen, setIsOpen] = useState(false)
     const [refresh, setRefresh] = useState(false)
@@ -26,11 +27,13 @@ export default function SuppliersPage() {
     }
 
     const handleDelete = async() =>{
+        setIsLoading(true)
         const response = await deleteSupplier(id)
         if (response === 'berhasil') {
             onClose()
             setRefresh(!refresh)
         }
+        setIsLoading(false)
     }
 
     const filteredSuppliers = useMemo(
@@ -41,8 +44,11 @@ export default function SuppliersPage() {
     )
 
     const fetchSuppliers = async () => {
+        setIsLoading(true)
         const data = await getSuppliers()
         setSuppliers(data)
+        setIsLoading(false)
+
     }
 
         useEffect(() => {
@@ -51,7 +57,7 @@ export default function SuppliersPage() {
     }, [refresh])
 
     return (
-        <MainLayout button={<BackButton routeTo="/pages/stockItems" />} title="Suppliers">
+        <MainLayout button={<BackButton routeTo="/pages/stockItems" />} isLoading={isLoading} title="Suppliers">
             <ConfirmationModal 
                 isOpen={isOpen} 
                 title="Konfirmasi Hapus" 

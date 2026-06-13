@@ -11,12 +11,16 @@ export default function StockParents(){
     
     const [stockParents, setStockParents] = useState<StockParentHead[]>([])
     const [searchTerm, setSearchTerm] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
     const button = <BackButton routeTo="/pages/stockItems" />
     const router = useRouter()
     
     const getStockParentsData = async() => {
+        setIsLoading(true)
         const data = await getAllParentProducts() as StockParentHead[]
         setStockParents(data)
+        setIsLoading(false)
+
     }
 
 
@@ -30,7 +34,7 @@ export default function StockParents(){
     )
 
     return(
-        <MainLayout button={button} title="Tipe-tipe unit">
+        <MainLayout isLoading={isLoading} button={button} title="Tipe-tipe unit">
             
             {/* Create New Button */}
             <button 

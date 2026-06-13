@@ -10,12 +10,15 @@ import { useParams } from "next/navigation"
 export default function EditSupplier() {
     const { id } = useParams()
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
     const [name, setName] = useState<string>("")
     const [message, setMessage] = useState<string>("")
 
     const data = async() => {
+        setIsLoading(true)
         const response = await getSupplierById(Number(id))
         setName(response[0].name)
+        setIsLoading(false)
         
     }
 
@@ -28,13 +31,15 @@ export default function EditSupplier() {
             setMessage('Nama supplier wajib diisi')
             return
         }
-
+        setIsLoading(true)
         try {
             await editSupplier(Number(id), name)
+            setIsLoading(false)
             setMessage('Supplier berhasil diedit')
         } catch (error) {
             setMessage('Gagal menambahkan supplier')
         }
+        setIsLoading(false)
 
         setTimeout(() => {
             router.push('/pages/stockItems/suppliers')
@@ -42,8 +47,8 @@ export default function EditSupplier() {
     }
 
     return (
-        <MainLayout button={<BackButton routeTo="/pages/stockItems/suppliers" />} title="Tambah Supplier">
-            {name}<div className="w-full h-screen rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
+        <MainLayout isLoading={isLoading} button={<BackButton routeTo="/pages/stockItems/suppliers" />} title="Tambah Supplier">
+            <div className="w-full h-screen rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
                 <div className="h-fit w-full max-w-lg bg-white px-6 py-6 rounded-xl border border-stroke space-y-6">
                     <div className="flex flex-col space-y-2">
                         <label htmlFor="supplier-name" className="text-sm font-medium">Nama Supplier</label>

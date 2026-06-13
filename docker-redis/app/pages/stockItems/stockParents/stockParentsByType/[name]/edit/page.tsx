@@ -10,10 +10,13 @@ export default function EditStockParentName() {
     const router = useRouter()
     const decodedName = decodeURIComponent(String(name))
     const [inputVal,setInputVal] = useState(decodedName)
+    const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState("")
     const handleSubmit = async() => {
+        setIsLoading(true)
         const result = await editParentProductsName(decodedName, inputVal)
         setMessage(result)
+        setIsLoading(false)
         if (result === "berhasil") {
             setTimeout(() => {
                 router.push(`/pages/stockItems/stockParents/stockParentsByType/${inputVal}`)
@@ -22,6 +25,7 @@ export default function EditStockParentName() {
     }
     return (
         <MainLayout 
+            isLoading={isLoading}
             button={<BackButton routeTo={`/pages/stockItems/stockParents/stockParentsByType/${name}`} />}
             title={`EDIT NAMA TIPE`}
         >

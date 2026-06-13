@@ -8,6 +8,7 @@ export default function CreateCategory(){
     
     const router = useRouter()
     const [namaKategori, setNamaKategori] = useState<string | undefined>('')
+    const [isLoading, setIsLoading] = useState(false)
     const [deskripsiKategori, setDeskripsiKategori] = useState<string | undefined>('')
     const [message, setMessage] = useState<string | undefined>('')
 
@@ -16,7 +17,9 @@ export default function CreateCategory(){
             setMessage("isi semua kolom!")
             return
         }
+        setIsLoading(true)
         const result = await createCategory(namaKategori,deskripsiKategori)
+        setIsLoading(false)
         setMessage(result)
         if (result === 'berhasil') {
                 setTimeout(() => {
@@ -25,7 +28,7 @@ export default function CreateCategory(){
         }
     }
     return(
-        <MainLayout button = {<BackButton routeTo="/pages/stockItems/categories" />} title = "Kategori Baru">
+        <MainLayout isLoading={isLoading} button = {<BackButton routeTo="/pages/stockItems/categories" />} title = "Kategori Baru">
             <div className="w-full h-screen rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
 
                 <div className="h-fit w-1/3 bg-white px-3 py-5 items-center justify-center rounded-xl border border-stroke space-y-2">

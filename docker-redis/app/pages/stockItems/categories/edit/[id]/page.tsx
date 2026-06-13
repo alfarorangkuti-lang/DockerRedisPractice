@@ -13,9 +13,12 @@ export default function EditCategory(){
     const [deskripsiKategori, setDeskripsiKategori] = useState<string | undefined>('')
     const [idCategory, setIdCategory] = useState(0)
     const [message, setMessage] = useState<string | undefined>(undefined)
+    const [isLoading, setIsLoading] = useState(false)
 
     const getDataById = async() => {
+        setIsLoading(true)
         const data = await getCategoryById(Number(id))
+        setIsLoading(false)
         setNamaKategori(data.category)
         setDeskripsiKategori(data.description)
         setIdCategory(data.id)
@@ -30,7 +33,9 @@ export default function EditCategory(){
             setMessage("isi semua kolom!")
             return
         }
+        setIsLoading(true)
         const result = await editCategory(idCategory, namaKategori,deskripsiKategori)
+        setIsLoading(false)
         setMessage(result)
         if (result === 'berhasil') {
                 setTimeout(() => {
@@ -40,7 +45,7 @@ export default function EditCategory(){
     }
 
     return(
-        <MainLayout button = {<BackButton routeTo="/pages/stockItems/categories" />} title = "Edit Kategori">
+        <MainLayout isLoading={isLoading} button = {<BackButton routeTo="/pages/stockItems/categories" />} title = "Edit Kategori">
             <div className="w-full h-screen rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
                 <div className="h-fit w-1/3 bg-white px-3 py-5 items-center justify-center rounded-xl border border-stroke space-y-2">
                     <div className="flex flex-col space-y-2">

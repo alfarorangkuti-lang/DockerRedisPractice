@@ -4,39 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\ParentProduct;
 
 class ParentProductController extends Controller
 {
     public function index()
     {
         try {
-            $products = $this->baseQuery()
-                ->orderByDesc('name')
-                ->get();
-
-            return $products
+            $data = ParentProduct::all();
+            $result = $data
                 ->groupBy('name')
-                ->map(fn ($variants, $name) => [
-                    'name' => $name,
-                    'variants' => $variants->map(fn ($product) => [
-                        'id' => $product->id,
-                        'memory' => $product->memory,
-                        'dgi_price' => $product->dgi_price,
-                        'created_at' => $product->created_at,
-                    ])->values(),
-                ])
+                ->map(function ($items, $name) {
+                    return [
+                        'name' => $name,
+                        'variants' => $items->map(function ($item) {
+                            return [
+                                'id' => $item['id'],
+                                'memory' => $item['ram'],
+                                'dgi_price' => $item['dgi_price']
+                            ];
+                        })->values()
+                    ];
+                })
                 ->values();
+
+            return response()->json($result);
+
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function showByName(string $name)
     {
         try {
-            return $this->baseQuery()
-                ->where('name', $name)
-                ->get();
+            $data = ParentProduct::where('name', $name)->get();
+            return response()->json($data);
         } catch (\Throwable $error) {
             return response($error->getMessage());
         }
@@ -45,77 +48,77 @@ class ParentProductController extends Controller
     public function show(int $id)
     {
         try {
-            return response()->json($this->baseQuery()->where('id', $id)->first());
+            $data = ParentProduct::findOrFail($id);
+            return response()->json($data);
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function store(Request $request)
     {
         try {
-            DB::table('parent_products')->insert([
-                'name' => $request->input('name'),
-                'ram' => $request->input('memory'),
-                'dgi_price' => $request->input('price'),
+            $validated = $request->validate([
+                'name' => 'string|required',
+                'memory' => 'string|required',
+                'price' => 'numeric|required'
+            ]);
+            ParentProduct::create([
+                'name' => $validated['name'],
+                'ram' => $validated['memory'],
+                'dgi_price' => $validated['price'],
             ]);
 
-            return response('berhasil');
+            return response()->json('berhasil');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function updateName(Request $request)
     {
         try {
-            $affected = DB::table('parent_products')
-                ->where('name', $request->input('name'))
-                ->update(['name' => $request->input('newName')]);
-
-            return response($affected > 0 ? 'berhasil' : '');
+            $validated = $request->validate([
+                'newName' => 'string|required'
+            ]);
+            $data = ParentProduct::where('name', $request->name);
+            $affected = $data->update(['name' => $validated['newName']]);
+            return response()->json('berhasil');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function update(Request $request)
     {
         try {
-            $affected = DB::table('parent_products')
-                ->where('id', $request->input('id'))
-                ->update([
-                    'name' => $request->input('name'),
-                    'ram' => $request->input('memory'),
-                    'dgi_price' => $request->input('price'),
-                ]);
+            $data = ParentProduct::findOrFail($request->id);
+            $validated = $request->validate([
+                'name' => 'string|required',
+                'memory' => 'string|required',
+                'price' => 'numeric|required'
+            ]);
+            $affected = $data->update([
+                'name' => $validated['name'],
+                'ram' => $validated['memory'],
+                'dgi_price' => $validated['price']
+            ]);
 
-            return response($affected > 0 ? 'berhasil' : '');
+            return response()->json($affected > 0 ? 'berhasil' : '');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function destroy(int $id)
     {
         try {
-            $affected = DB::table('parent_products')->where('id', $id)->delete();
+            $data = ParentProduct::findOrFail($id);
+            $affected = $data->delete();
 
-            return response($affected > 0 ? 'berhasil' : 'terjadi kesalahan');
+            return response()->json($affected > 0 ? 'berhasil' : 'terjadi kesalahan');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
-    }
-
-    private function baseQuery()
-    {
-        return DB::table('parent_products')
-            ->select([
-                'id',
-                'name',
-                DB::raw('ram as memory'),
-                'dgi_price',
-                'created_at',
-            ]);
     }
 }

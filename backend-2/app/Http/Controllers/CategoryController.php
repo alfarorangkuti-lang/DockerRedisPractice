@@ -4,65 +4,71 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         try {
-            return DB::table('categories')->get();
+            $data = Category::all();
+            return response()->json($data);
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function show(int $id)
     {
         try {
-            return response()->json(DB::table('categories')->where('id', $id)->first());
+            $data = Category::findOrFail($id);
+            return response()->json($data);
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function store(Request $request)
     {
         try {
-            DB::table('categories')->insert([
-                'category' => $request->input('category'),
-                'description' => $request->input('description'),
+            $validated = $request->validate([
+                'category' => 'string|required',
+                'description' => 'string|nullable'
             ]);
+            Category::create($validated);
 
-            return response('berhasil');
+            return response()->json('berhasil');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function update(Request $request)
     {
         try {
-            $affected = DB::table('categories')
-                ->where('id', $request->input('id'))
-                ->update([
-                    'category' => $request->input('category'),
-                    'description' => $request->input('description'),
-                ]);
+            $item = Category::findOrFail($request->id);
+            $validated = $request->validate([
+                'category' => 'string|required|unique:categories,category',
+                'description' => 'string|nullable'
+            ]);
+            
+            $affected = $item->update($validated);
 
-            return response($affected > 0 ? 'berhasil' : 'gagal');
+            return response()->json($affected > 0 ? 'berhasil' : 'gagal');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 
     public function destroy(int $id)
     {
         try {
-            $affected = DB::table('categories')->where('id', $id)->delete();
+            $data = Category::findOrFail($id);
+            $affected = $data->delete();
 
-            return response($affected > 0 ? 'berhasil' : 'gagal');
+            return response()->json($affected > 0 ? 'berhasil' : 'gagal');
         } catch (\Throwable $error) {
-            return response($error->getMessage());
+            return response()->json($error->getMessage());
         }
     }
 }

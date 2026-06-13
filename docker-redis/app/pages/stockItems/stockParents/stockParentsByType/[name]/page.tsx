@@ -11,6 +11,7 @@ import { useState,useEffect } from "react"
 export default function StockParentsByType() {
     const [parentProducts, setParentProducts] = useState<StockParents[]>([])
     const [isOpen, setIsOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const { name } = useParams()
     const router = useRouter()
     const [desc, setDesc] = useState("Yaking ingin menghapus?")
@@ -25,19 +26,25 @@ export default function StockParentsByType() {
     }
 
     const handleDelete = async() => {
+        setIsLoading(true)
         const result = await deleteParentProducts(selectedId)
         if (result === "berhasil") {
             setIsOpen(false)
             setRefresh(!refresh)
+            setIsLoading(false)
+
         } else {
             setDesc(result)
+            setIsLoading(false)
         }
     }
 
     const getData = async() => {
+        setIsLoading(true)
         const data = await getAllParentProductsByName(String(name))
         console.log(data)
         setParentProducts(data)
+        setIsLoading(false)
     }
     
     useEffect(() => {
@@ -45,6 +52,7 @@ export default function StockParentsByType() {
     },[refresh])
     return (
         <MainLayout 
+            isLoading={isLoading}
             button={<BackButton routeTo="/pages/stockItems/stockParents" />}
             title={decodedName}
         >

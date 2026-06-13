@@ -3,7 +3,8 @@
 import NavBar from "./navbar"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-export default function MainLayout({children, title, button} : {children : React.ReactNode, title: String, button?: React.ReactNode}){
+import Spinner from "./spinner"
+export default function MainLayout({children, title, button, isLoading=false} : {children : React.ReactNode, title: String, button?: React.ReactNode, isLoading?:boolean}){
     const router = useRouter()
     useEffect(() => {
         const token = localStorage.getItem("tokenApp")
@@ -24,6 +25,7 @@ export default function MainLayout({children, title, button} : {children : React
                         <span className="text-3xl font-bold">{title}</span>
                     </div>
                 </div>
+                <Spinner isShow={isLoading} />
                 {children}
             </div>
             </NavBar>

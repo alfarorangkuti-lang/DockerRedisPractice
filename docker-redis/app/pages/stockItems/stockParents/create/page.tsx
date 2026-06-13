@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 
 export default function CreateStockParent(){
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
     const param = useSearchParams()
     const type = param.get("name")
     
@@ -32,8 +33,10 @@ export default function CreateStockParent(){
             setMessage('Semua field wajib diisi')
             return
         }
+        setIsLoading(true)
         const result = await createParentProducts(name, memory, price)
         setMessage(result as string)
+        setIsLoading(false)
 
         if (result === "berhasil") {
             setTimeout(() => {
@@ -51,7 +54,7 @@ export default function CreateStockParent(){
     }
 
     return (
-        <MainLayout button={button} title="Tipe Baru">
+        <MainLayout isLoading={isLoading} button={button} title="Tipe Baru">
             <div className="w-full min-h-[80vh] rounded-xl bg-midground border border-stroke flex justify-center mt-4 py-4">
                 <div className="h-fit w-full max-w-xl bg-white px-6 py-6 rounded-xl border border-stroke space-y-4">
                     <div className="flex flex-col space-y-2">

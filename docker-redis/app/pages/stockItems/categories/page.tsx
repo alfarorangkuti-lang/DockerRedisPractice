@@ -15,6 +15,7 @@ export default function Categories(){
     }
     
     const [kategoris, setKategoris] = useState<Kategori[]>([])
+    const [isLoading, setIsLoading] = useState(false)
     const [deleteId, setDeleteId] = useState<number | undefined>(undefined)
     const [isOpen, setIsOpen] = useState(false)
     const [isRefresh, setIsRefresh] = useState(true)
@@ -23,8 +24,10 @@ export default function Categories(){
     
 
     const getCategoriesData = async() => {
+        setIsLoading(true)
         const data = await getCategories()
         setKategoris(data)
+        setIsLoading(false)
     }
 
     const handleDelete = async(id:number) =>{
@@ -33,7 +36,9 @@ export default function Categories(){
     }
 
     const onConfirmDelete = async() => {
+        setIsLoading(true)
         const data = await deleteCategory(deleteId)
+        setIsLoading(false)
         if (data === 'berhasil') {
             setIsOpen(false)
             setIsRefresh(!isRefresh)
@@ -45,7 +50,7 @@ export default function Categories(){
     }, [isRefresh])
 
     return(
-        <MainLayout button={button} title = "Daftar Kategori">
+        <MainLayout button={button} title = "Daftar Kategori" isLoading={isLoading}>
             <ConfirmationModal isOpen={isOpen} title="Hapus Kategori" description="Konfirmasi aksi" onCancel={() => {setIsOpen(!isOpen)}} onConfirm={onConfirmDelete}/>
             <button onClick={() => router.push('./categories/create')} className="w-1/4 hover:bg-gray-100/70 duration-150 cursor-pointer rounded-xl bg-midground border border-stroke flex mt-4 py-2">
 
@@ -65,7 +70,6 @@ export default function Categories(){
             <div className="flex w-full bg-stroke h-0.5 mt-4"></div>
 
             <div className="grid grid-cols-4 w-full flex-1 gap-2">
-
                 {kategoris.map((kategori, index) => (
                     <div key={kategori.id} className="w-full rounded-xl bg-midground border border-stroke flex mt-4 py-6">
 
