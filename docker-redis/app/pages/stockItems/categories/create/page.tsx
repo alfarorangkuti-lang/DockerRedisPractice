@@ -12,6 +12,10 @@ export default function CreateCategory(){
     const [message, setMessage] = useState<string | undefined>('')
 
     const handleSubmit = async() => {
+        if (!namaKategori) {
+            setMessage("isi semua kolom!")
+            return
+        }
         const result = await createCategory(namaKategori,deskripsiKategori)
         setMessage(result)
         if (result === 'berhasil') {

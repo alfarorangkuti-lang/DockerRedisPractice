@@ -26,6 +26,10 @@ export default function EditCategory(){
     }, [])
 
     const handleSubmit = async() => {
+        if (!namaKategori) {
+            setMessage("isi semua kolom!")
+            return
+        }
         const result = await editCategory(idCategory, namaKategori,deskripsiKategori)
         setMessage(result)
         if (result === 'berhasil') {
