@@ -6,6 +6,8 @@ im planing to make these feature for this mini erp:
 - ready to sell items
 - quicksell
 
+i'll deal with redis and docker later...
+
 
 otw to make purchasing feature:
 steps:
